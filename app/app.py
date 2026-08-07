@@ -20,6 +20,9 @@ st.set_page_config(
 
 # Constants
 DATASET_PATH = os.path.join(BASE_DIR, 'dataset', 'heart.csv')
+DATASET_ALT_PATH = os.path.join(BASE_DIR, 'dataset', 'heart_cleveland_upload-selected-columns.csv')
+if not os.path.exists(DATASET_PATH) and os.path.exists(DATASET_ALT_PATH):
+    DATASET_PATH = DATASET_ALT_PATH
 FEATURE_IMPORTANCE_IMG = os.path.join(BASE_DIR, 'images', 'feature_importance_random_forest.png')
 
 @st.cache_data
@@ -39,7 +42,7 @@ def main():
     # --- Sidebar ---
     st.sidebar.title("❤️ AI Heart Disease Prediction")
     st.sidebar.markdown("""
-    **Final Year University Project**
+  
     
     This application uses an Artificial Intelligence model (Random Forest Classifier) to predict the likelihood of heart disease based on medical attributes.
     
@@ -106,11 +109,13 @@ def main():
                     
                 elif feature in cat_cols:
                     # Categorical input - Dropdown
-                    options = [""]
-                    if df_schema is not None and feature in df_schema.columns:
-                        # Convert options to string to ensure json serialization isn't an issue
-                        options = df_schema[feature].dropna().unique().tolist()
-                        
+                    if feature == 'sex':
+                        options = ['Male', 'Female']
+                    else:
+                        options = [""]
+                        if df_schema is not None and feature in df_schema.columns:
+                            # Convert options to string to ensure json serialization isn't an issue
+                            options = df_schema[feature].dropna().unique().tolist()
                     patient_data[feature] = st.selectbox(
                         f"{label}", 
                         options=options,

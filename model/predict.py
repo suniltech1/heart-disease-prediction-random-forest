@@ -59,7 +59,15 @@ def predict_patient(patient_data: dict, model_data: dict) -> Tuple[str, float, s
     """
     pipeline = model_data['pipeline']
     expected_features = model_data.get('feature_names_in', [])
-    
+
+    # Convert user-friendly sex values back to numeric format before prediction.
+    if 'sex' in patient_data and isinstance(patient_data['sex'], str):
+        sex_lower = patient_data['sex'].strip().lower()
+        if sex_lower == 'male':
+            patient_data['sex'] = 1
+        elif sex_lower == 'female':
+            patient_data['sex'] = 0
+
     # Ensure patient data aligns with expected features
     # If the user hasn't provided some features, we can try to fill with NaN or raise error.
     # We will construct a DataFrame with the exact columns.
